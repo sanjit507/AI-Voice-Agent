@@ -1,4 +1,4 @@
-# CampusX Voice Agent
+# Lecture 3 - AI Voice Agent Workshop
 
 A local voice agent for CampusX guidance and booking, built with [Pipecat](https://pipecat.ai). This agent helps callers explore CampusX courses, mentorship programs, and book free 20-minute guidance sessions through natural voice conversation.
 
@@ -10,59 +10,6 @@ A local voice agent for CampusX guidance and booking, built with [Pipecat](https
 - **Semantic Retrieval (MOSS)** - Optional integration with pipecat-moss for semantic knowledge retrieval
 - **Prompt and Tool Guardrails** - CampusX-specific policy, booking rules, and verification behavior live in the system prompt and function tools
 - **WebRTC Transport** - Runs in browser via Pipecat's development runner
-
-## Architecture
-
-The app has one executable entry point (`main.py`) and a focused runtime package under
-`src/campusx_voice_agent`. The full flow is:
-
-```mermaid
-flowchart LR
-    subgraph Entry["Entry points"]
-        Main["main.py"]
-        Runner["Pipecat runner"]
-        BookingCLI["bookings CLI"]
-        IndexCLI["MOSS index CLI"]
-    end
-
-    subgraph Client["Browser client"]
-        Mic["Microphone"]
-        Speaker["Speaker"]
-    end
-
-    subgraph Runtime["Live voice pipeline"]
-        Transport["WebRTC transport"]
-        STT["OpenAI realtime STT"]
-        Turn["VAD + turn context"]
-        Retrieval["Optional MOSS retrieval"]
-        LLM["OpenAI Responses LLM<br/>system prompt + tools"]
-        TTS["OpenAI TTS"]
-    end
-
-    subgraph Tools["Function tools"]
-        KBTool["Knowledge-base search"]
-        SlotTool["Guidance slots"]
-        BookTool["Booking tool"]
-    end
-
-    subgraph Data["Local and external data"]
-        KBFiles["data/knowledge_base"]
-        SQLite["SQLite bookings DB"]
-        MossIndex["MOSS index"]
-    end
-
-    Main -->|"python main.py"| Runner --> Transport
-    Main -->|"bookings"| BookingCLI --> SQLite
-    Main -->|"moss-index"| IndexCLI --> KBFiles
-    IndexCLI -->|"chunk and upload"| MossIndex
-
-    Mic --> Transport --> STT --> Turn --> Retrieval --> LLM --> TTS --> Transport --> Speaker
-
-    Retrieval <-->|"semantic passages"| MossIndex
-    LLM -.->|"search_campusx_knowledge_base"| KBTool --> KBFiles
-    LLM -.->|"get_available_guidance_slots"| SlotTool --> SQLite
-    LLM -.->|"book_free_guidance_session"| BookTool --> SQLite
-```
 
 ### Core Components
 

@@ -1,6 +1,6 @@
 # Lecture 3 - AI Voice Agent Workshop
 
-A local voice agent for CampusX guidance and booking, built with [Pipecat](https://pipecat.ai). This agent helps callers explore CampusX courses, mentorship programs, and book free 20-minute guidance sessions through natural voice conversation.
+A local voice agent for CampusX guidance and booking sessions, built with [Pipecat](https://docs.pipecat.ai/overview/pipecat). This agent helps callers explore CampusX courses, mentorship programs, and book free 20-minute guidance sessions through natural voice conversation.
 
 ## Features
 
@@ -147,29 +147,6 @@ The `stages/` directory builds the voice agent step by step in this sequence:
 | `10_final_voice_agent.py` | Combine booking tools, browser TTS, conversational context, Moss retrieval, and barge-in handling |
 
 Moss enriches context before generation. Function tools come later for actions such as checking and booking guidance slots.
-
-## How It Works
-
-1. **Caller speaks** - WebRTC audio captured in browser
-2. **STT** (OpenAI Realtime) transcribes speech to text
-3. **Turn detection** (VAD + transcription) determines when user finishes
-4. **Optional Moss retrieval** adds relevant semantic passages to the LLM context when Moss is configured
-5. **LLM** (GPT-5) generates a response with:
-   - System prompt defining CampusX specialist personality and policy
-   - Function tools for knowledge search and booking
-   - Optional Moss semantic context injected before the LLM
-6. **TTS** (OpenAI) streams audio back to browser
-7. **Assistant context is kept in the live pipeline, and metrics are printed after output frames pass through the transport**
-8. **Booking** (if requested) stores confirmed sessions in SQLite
-
-## Prompt and Tool Policy
-
-The agent enforces these rules through `GUIDANCE_SYSTEM_PROMPT` and the function tools in `tools.py`:
-- Only answer CampusX-related questions from the caller's context
-- Never invent CampusX information
-- Never promise jobs, salaries, future launches, discounts, refunds, or private links
-- Use verified info only; direct to `support@campusx.in` for account/payment issues
-- Keep replies short, warm, and natural for speech
 
 ## Extending the Agent
 

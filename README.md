@@ -1,162 +1,203 @@
-# CampusX AI Voice Agent (Powered by Pipecat & Google Gemini Live)
+# CSE Study247 AI Voice Agent (Powered by Pipecat & Google Gemini Live)
 
-A real-time, bidirectional voice agent built with [Pipecat](https://docs.pipecat.ai/) and Google's **Gemini Live API** (native speech-to-speech). This agent serves as a voice assistant for CampusX, guiding callers through courses (DSMP, DAMP), mentorship programs, and scheduling 20-minute guidance sessions with automated slot management.
+A real-time, bidirectional conversational AI voice agent built with [Pipecat](https://docs.pipecat.ai/) and Google's **Gemini Live API** (native speech-to-speech audio streaming). 
+
+This voice assistant is designed for **[CSE Study247](https://csestudy247.com/)**, helping students, job seekers, and engineering aspirants explore computer science study materials, semester notes, competitive exam guides (GATE, ISRO, SBTE Bihar), modern AI/coding roadmaps, and schedule 1-on-1 guidance sessions.
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
 - **Native Speech-to-Speech**: Ultra-low latency voice conversation powered by Google Gemini Live (`models/gemini-2.5-flash-native-audio-preview`).
-- **CampusX Knowledge Retrieval**:
-  - Local verified knowledge base for instant information on courses, curriculum, fees, and career support.
-  - Optional semantic search integration via **pipecat-moss**.
-- **Interactive Guidance Booking**:
-  - Automated slot availability generation and booking management.
-  - Persistent SQLite storage with unique booking reference IDs and email validation.
-- **Natural Conversation Handling**: Real-time turn detection using Silero VAD, interruption / barge-in support, and intelligent filler audio during tool calls.
-- **Browser-Ready WebRTC**: Instant web interface served via Pipecat's development runner.
-- **Progressive Learning Stages**: Includes step-by-step example stages (`stages/00` to `stages/10`) demonstrating the evolution from basic WebRTC frames to a full production-ready voice agent.
+- **CSE Study247 Knowledge Retrieval**:
+  - Verified local knowledge base covering [csestudy247.com](https://csestudy247.com/) resources:
+    - Core CS notes (DSA, C/C++, Python, Java, OS, DBMS, CN, TOC).
+    - Competitive exam syllabi & PYQs (GATE CS/DA, ISRO, DRDO, UGC NET, BPSC Teacher).
+    - State university & polytechnic board resources (SBTE Bihar Diploma, BEU Bihar, BCECE LE).
+    - Developer roadmaps (AI Voice Agents, Pipecat, Gemini Live, LangChain, RAG, FastAPI).
+    - Job/internship notifications and practice mock tests.
+  - Optional semantic retrieval via **pipecat-moss**.
+- **Interactive Mentorship & Guidance Booking**:
+  - Dynamic slot availability generation (morning, afternoon, evening).
+  - SQLite persistent storage with unique booking reference IDs and email validation.
+- **Natural Voice Handling**:
+  - Silero VAD (Voice Activity Detection) for precise turn-taking.
+  - Barge-in & interruption support so users can speak naturally at any point.
+  - Natural audio filler responses during tool execution.
+- **WebRTC In-Browser Interface**:
+  - Instant browser client served via Pipecat's development runner at `http://localhost:7860`.
 
 ---
 
-## Core Components
+## 📁 Repository Structure
 
-| Module | Location | Purpose |
-|--------|----------|---------|
-| `main.py` | Root | Main executable CLI for running the bot, checking bookings, and building MOSS index |
-| `agent.py` | `src/campusx_voice_agent/` | Bot assembly: Gemini Live service, context aggregation, tools, and audio pipeline |
-| `tools.py` | `src/campusx_voice_agent/` | Function tools: knowledge search, slot availability, SQLite booking persistence |
-| `pipeline.py` | `src/campusx_voice_agent/` | WebRTC transport setup, turn management strategies, and metrics reporting |
-| `knowledge_base.py` | `src/campusx_voice_agent/` | Local document search engine |
-| `moss.py` / `moss_index.py` | `src/campusx_voice_agent/` | Semantic RAG processor and indexing tools |
-| `bookings.py` | `src/campusx_voice_agent/` | CLI table viewer for stored guidance bookings |
-| `stages/` | `stages/` | Educational step-by-step implementations from raw frames to full agent |
+```text
+AI_Voice/
+|-- main.py                      # Main entry point (WebRTC bot / CLI bookings / MOSS index)
+|-- pyproject.toml               # Project metadata & dependencies
+|-- .env.template                # Template for environment variables (API keys)
+|-- data/
+|   |-- guidance_bookings.db     # SQLite database for scheduled guidance sessions
+|   `-- knowledge_base/          # Verified markdown knowledge base
+|       |-- csestudy247_overview.md
+|       |-- csestudy247_courses_and_roadmaps.md
+|       `-- dsa_python_course_full_curriculum.md
+|-- src/
+|   `-- campusx_voice_agent/
+|       |-- agent.py             # Bot wiring: Gemini Live service, aggregators, pipeline
+|       |-- tools.py             # Function tools: KB search, slot availability, booking
+|       |-- knowledge_base.py    # Local keyword search engine
+|       |-- pipeline.py          # Pipecat WebRTC transport & turn management
+|       |-- bookings.py          # CLI table viewer for stored bookings
+|       |-- moss.py              # Optional MOSS semantic retrieval processor
+|       `-- config.py            # Path & environment settings
+`-- stages/                      # Step-by-step educational pipeline stages (00 to 10)
+```
 
 ---
 
-## Prerequisites
+## 📋 Prerequisites
 
 - **Python**: 3.12+
-- **Google AI Studio API Key**: Access to Gemini Live native-audio models
-- **Modern Browser**: Chrome, Firefox, Edge, or Brave (WebRTC support with microphone permission)
+- **Google AI Studio API Key**: Free API key with access to Gemini Live native-audio models from [Google AI Studio](https://aistudio.google.com/).
+- **Web Browser**: Chrome, Edge, Firefox, or Brave (WebRTC support with microphone permission).
 
 ---
 
-## Installation
+## 🚀 Quick Start Guide
+
+### 1. Clone & Enter the Repository
 
 ```bash
-# Clone the repository
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>/AI_Voice
+git clone https://github.com/sanjit507/AI-Voice-Agent.git
+cd AI-Voice-Agent/AI_Voice
+```
 
-# Create virtual environment
+### 2. Set Up Virtual Environment
+
+**Windows:**
+```powershell
 python -m venv .venv
-# On Windows:
 .venv\Scripts\activate
-# On Linux/macOS:
+```
+
+**Linux / macOS:**
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
+```
 
-# Install dependencies with pip
+### 3. Install Dependencies
+
+Using `pip`:
+```bash
 pip install -e ".[dev]"
+```
 
-# Or using uv (recommended for fast installs)
+Or using `uv` (recommended for faster dependency resolution):
+```bash
 uv sync --dev
 ```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 1. Copy `.env.template` to `.env`:
    ```bash
+   # Windows
+   copy .env.template .env
+
+   # Linux / macOS
    cp .env.template .env
    ```
-2. Configure your environment variables in `.env`:
 
-```env
-# Required: Google Gemini API Key (Google AI Studio)
-GOOGLE_API_KEY=your-google-ai-studio-key
+2. Add your **Google AI Studio API Key** inside `.env`:
+   ```env
+   GOOGLE_API_KEY=your_actual_google_api_key_here
+   GOOGLE_GEMINI_MODEL=models/gemini-2.5-flash-native-audio-preview-12-2025
+   GOOGLE_GEMINI_VOICE=Puck
+   ```
 
-# Optional: Gemini model and voice configuration
-GOOGLE_GEMINI_MODEL=models/gemini-2.5-flash-native-audio-preview-12-2025
-GOOGLE_GEMINI_VOICE=Puck
-
-# Optional: Custom database path for bookings (defaults to data/guidance_bookings.db)
-# GUIDANCE_DB_PATH=data/guidance_bookings.db
-
-# Optional: MOSS semantic retrieval configuration
-# MOSS_PROJECT_ID=...
-# MOSS_PROJECT_KEY=...
-# MOSS_INDEX_NAME=...
-# MOSS_TOP_K=5
-# MOSS_ALPHA=0.8
-# MOSS_MODEL_ID=moss-minilm
-```
+*(Note: `.env` and virtual environments are strictly ignored in `.gitignore` to protect your credentials.)*
 
 ---
 
-## Running the Agent
+## 🎙️ Running the Voice Agent
 
-### 1. Launch the Voice Agent (WebRTC UI)
+### 1. Start the Voice Agent (WebRTC UI)
 
 ```bash
-# With uv
-uv run python main.py
-
-# Or directly with python
+# With standard Python
 python main.py
+
+# Or with uv
+uv run python main.py
 ```
 
-- Open your browser at **`http://localhost:7860`**.
-- Grant microphone access.
-- Start speaking naturally to interact with the voice agent.
+- Open your browser at: **`http://localhost:7860`**
+- Grant microphone access when prompted.
+- Start speaking naturally to interact with the assistant!
 
-### 2. View Saved Bookings
+---
 
-Check bookings stored in SQLite from the command line:
+### 2. View Scheduled Guidance Bookings
+
+View all sessions booked by callers through the voice assistant:
 
 ```bash
+python main.py bookings
+# or
 uv run python main.py bookings
 ```
 
+---
+
 ### 3. (Optional) Build MOSS Semantic Index
 
-If you are using MOSS for semantic knowledge base search:
+If you choose to enable MOSS semantic RAG:
 
 ```bash
-uv run python main.py moss-index
+python main.py moss-index
 ```
 
 ---
 
-## Step-by-Step Architecture Stages
+## 💬 Sample Questions You Can Ask the Bot
 
-The `stages/` directory contains complete standalone scripts demonstrating how the voice agent is constructed incrementally:
+| Category | Example Question |
+|----------|------------------|
+| **About Platform** | *"What is CSE Study247 and what resources are available on your website?"* |
+| **Study Materials** | *"Do you provide handwritten notes for Data Structures and Operating Systems?"* |
+| **Exam Prep** | *"Do you have previous year question papers for GATE CS and ISRO?"* |
+| **State Boards** | *"Do you have notes and syllabus for SBTE Bihar Computer Science diploma?"* |
+| **Tech Roadmaps** | *"Can I learn how to build AI Voice Agents on csestudy247.com?"* |
+| **Pricing** | *"Are the notes and mock tests on csestudy247.com free?"* |
+| **Support** | *"How can I contact the CSE Study247 team?"* |
+| **Book Session** | *"I would like to book a free 20-minute guidance session."* |
 
-| Stage | Script | Description |
-|-------|--------|-------------|
-| `00` | `00_empty_project.py` | Verifies environment setup and base imports |
-| `01` | `01_transport_and_frames.py` | WebRTC audio streaming into Pipecat frames |
+---
+
+## 🛠️ Step-by-Step Learning Stages
+
+The `stages/` folder documents the evolution from scratch to a full agent:
+
+| Stage | Script | Purpose |
+|-------|--------|---------|
+| `00` | `00_empty_project.py` | Environment setup and sanity check |
+| `01` | `01_transport_and_frames.py` | WebRTC transport and incoming audio frames |
 | `02` | `02_cloud_stt.py` | Real-time speech-to-text transcript processing |
-| `03` | `03_turn_detection_and_context.py` | Silero VAD, user turn boundaries, context aggregation |
-| `04` | `04_llm_without_identity.py` | Basic LLM integration without business logic |
-| `05` | `05_system_prompt.py` | Persona grounding, booking instructions, and conversation guardrails |
-| `06` | `06_moss_create_index.py` | Semantic chunking and vector index creation |
-| `07` | `07_moss_rag_before_llm.py` | Context enrichment with MOSS RAG before model generation |
-| `08` | `08_tts_audio_frames.py` | Audio synthesis from assistant responses |
-| `09` | `09_conversation_memory.py` | Bidirectional audio streaming with conversation memory |
-| `10` | `10_final_voice_agent.py` | Complete agent with function calling, SQLite booking, interruption, and filler speech |
+| `03` | `03_turn_detection_and_context.py` | Silero VAD turn boundaries and context aggregation |
+| `04` | `04_llm_without_identity.py` | Direct LLM responses without persona |
+| `05` | `05_system_prompt.py` | Persona grounding, guardrails, and conversation rules |
+| `06` | `06_moss_create_index.py` | Offline vector index generation |
+| `07` | `07_moss_rag_before_llm.py` | RAG retrieval context injection before generation |
+| `08` | `08_tts_audio_frames.py` | Text-to-speech audio frame synthesis |
+| `09` | `09_conversation_memory.py` | Bidirectional streaming and multi-turn context |
+| `10` | `10_final_voice_agent.py` | Complete agent with function calling, SQLite booking, and interruption support |
 
 ---
 
-## Extending the Project
-
-- **Add Knowledge Base Content**: Place `.md` or `.txt` files into `data/knowledge_base/`.
-- **Add Function Tools**: Define your custom tool with `FunctionCallParams` in `src/campusx_voice_agent/tools.py` and register it in `GUIDANCE_TOOLS`.
-- **Tune Bot Behavior**: Update prompt guidelines and policies in `GUIDANCE_SYSTEM_PROMPT` inside `src/campusx_voice_agent/tools.py`.
-
----
-
-## License
+## 📄 License
 
 This project is licensed under the MIT License.

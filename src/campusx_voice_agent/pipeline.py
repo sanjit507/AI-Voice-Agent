@@ -8,8 +8,12 @@ from collections.abc import Sequence
 from loguru import logger
 from pipecat.audio.vad.silero import SileroVADAnalyzer
 from pipecat.frames.frames import (
+    ErrorFrame,
     Frame,
+    InputAudioRawFrame,
+    LLMContextFrame,
     MetricsFrame,
+    TTSAudioRawFrame,
 )
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.worker import PipelineParams, PipelineWorker
@@ -42,7 +46,7 @@ def require_env(*names: str) -> None:
         joined = ", ".join(missing)
         raise RuntimeError(
             f"Missing environment variable(s): {joined}. "
-            "Copy values from .env.example into a local .env.local file."
+            "Copy values from .env.template into a local .env.local file."
         )
 
 
@@ -53,7 +57,7 @@ def make_user_turn_params(*, interruptions: bool = True) -> LLMUserAggregatorPar
             VADUserTurnStartStrategy(enable_interruptions=interruptions),
             TranscriptionUserTurnStartStrategy(enable_interruptions=interruptions),
         ],
-        stop=[SpeechTimeoutUserTurnStopStrategy(user_speech_timeout=0.6)],
+        stop=[SpeechTimeoutUserTurnStopStrategy(user_speech_timeout=0.3)],
     )
     return LLMUserAggregatorParams(
         vad_analyzer=SileroVADAnalyzer(),
@@ -66,7 +70,9 @@ class MetricsPrinter(FrameProcessor):
 
     async def process_frame(self, frame: Frame, direction: FrameDirection):
         await super().process_frame(frame, direction)
-        if isinstance(frame, MetricsFrame):
+        if isinstance(frame, ErrorFrame):
+            logger.error("PIPELINE ERROR: {}", frame.error)
+        elif isinstance(frame, MetricsFrame):
             for metric in frame.data:
                 fields = ", ".join(
                     f"{name}={value!r}"
@@ -74,6 +80,27 @@ class MetricsPrinter(FrameProcessor):
                     if not name.startswith("_")
                 )
                 logger.info("METRIC {}: {}", type(metric).__name__, fields)
+        await self.push_frame(frame, direction)
+
+
+class AudioTrace(FrameProcessor):
+    """Log enough audio flow to distinguish browser, Gemini, and output failures."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._input_frames = 0
+        self._output_frames = 0
+
+    async def process_frame(self, frame: Frame, direction: FrameDirection):
+        await super().process_frame(frame, direction)
+        if isinstance(frame, InputAudioRawFrame):
+            self._input_frames += 1
+            if self._input_frames == 1 or self._input_frames % 100 == 0:
+                logger.info("AUDIO INPUT frames={}", self._input_frames)
+        elif isinstance(frame, TTSAudioRawFrame):
+            self._output_frames += 1
+            if self._output_frames == 1 or self._output_frames % 100 == 0:
+                logger.info("AUDIO OUTPUT frames={}", self._output_frames)
         await self.push_frame(frame, direction)
 
 
@@ -104,6 +131,8 @@ async def run_pipeline(
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
         logger.info("Browser connected: {}", client)
+        if context is not None:
+            await worker.queue_frame(LLMContextFrame(context=context))
 
     # If the browser tab closes, stop the whole pipeline cleanly.
     @transport.event_handler("on_client_disconnected")

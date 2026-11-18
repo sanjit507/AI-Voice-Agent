@@ -1,11 +1,11 @@
-﻿[project]
+[project]
 name = "lecture-3-pipecat-voice-agent"
 version = "0.1.0"
 description = "Progressive Pipecat cascade voice-agent examples for Lecture 3"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "pipecat-ai[openai,runner,silero,webrtc,websocket]==1.6.0",
+    "pipecat-ai[google,openai,runner,silero,webrtc,websocket]==1.6.0",
     "pipecat-moss>=0.0.3",
 ]
 
@@ -24,4 +24,3 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-

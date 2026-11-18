@@ -11,6 +11,7 @@ SRC_DIR = PROJECT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+from campusx_voice_agent import config as _config  # noqa: E402,F401
 from campusx_voice_agent.bookings import show_bookings  # noqa: E402
 from campusx_voice_agent.moss_index import main as create_moss_index  # noqa: E402
 

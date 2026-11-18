@@ -1,78 +1,90 @@
-# Lecture 3 - AI Voice Agent Workshop
+# CampusX AI Voice Agent (Powered by Pipecat & Google Gemini Live)
 
-A local voice agent for CampusX guidance and booking sessions, built with [Pipecat](https://docs.pipecat.ai/overview/pipecat). This agent helps callers explore CampusX courses, mentorship programs, and book free 20-minute guidance sessions through natural voice conversation.
+A real-time, bidirectional voice agent built with [Pipecat](https://docs.pipecat.ai/) and Google's **Gemini Live API** (native speech-to-speech). This agent serves as a voice assistant for CampusX, guiding callers through courses (DSMP, DAMP), mentorship programs, and scheduling 20-minute guidance sessions with automated slot management.
 
-## Features
+---
 
-- **Voice-based interaction** - Natural speech-to-speech conversation using OpenAI Realtime STT, LLM, and TTS
-- **CampusX Knowledge Base** - Answers questions about courses (DSMP, DAMP), CampusX One, pricing, curriculum, prerequisites, YouTube content, communities, and career support
-- **Free Guidance Booking** - Callers can check available slots and book 20-minute guidance sessions
-- **Semantic Retrieval (MOSS)** - Optional integration with pipecat-moss for semantic knowledge retrieval
-- **Prompt and Tool Guardrails** - CampusX-specific policy, booking rules, and verification behavior live in the system prompt and function tools
-- **WebRTC Transport** - Runs in browser via Pipecat's development runner
+## Key Features
 
-### Core Components
+- **Native Speech-to-Speech**: Ultra-low latency voice conversation powered by Google Gemini Live (`models/gemini-2.5-flash-native-audio-preview`).
+- **CampusX Knowledge Retrieval**:
+  - Local verified knowledge base for instant information on courses, curriculum, fees, and career support.
+  - Optional semantic search integration via **pipecat-moss**.
+- **Interactive Guidance Booking**:
+  - Automated slot availability generation and booking management.
+  - Persistent SQLite storage with unique booking reference IDs and email validation.
+- **Natural Conversation Handling**: Real-time turn detection using Silero VAD, interruption / barge-in support, and intelligent filler audio during tool calls.
+- **Browser-Ready WebRTC**: Instant web interface served via Pipecat's development runner.
+- **Progressive Learning Stages**: Includes step-by-step example stages (`stages/00` to `stages/10`) demonstrating the evolution from basic WebRTC frames to a full production-ready voice agent.
 
-| Module | Purpose |
-|--------|---------|
-| `main.py` | Single executable entry point for the bot, bookings viewer, and MOSS index builder |
-| `agent.py` | Runtime composition: OpenAI STT, OpenAI Responses LLM, OpenAI TTS, context aggregators, optional MOSS, and processor ordering |
-| `pipeline.py` | Shared Pipecat utilities for WebRTC transport creation, VAD/transcription turn strategies, pipeline worker lifecycle, and metrics printing |
-| `tools.py` | Function tools, CampusX system prompt and policy, booking-slot generation, SQLite booking persistence, and saved-booking lookup |
-| `knowledge_base.py` | Local verified markdown/text search used by the `search_campusx_knowledge_base` tool |
-| `moss.py` | Optional runtime semantic retrieval processor that injects MOSS passages into `LLMContext` |
-| `moss_index.py` | Offline index builder that chunks local knowledge-base markdown and uploads it to MOSS |
-| `config.py` | Project paths, `.env` loading, and Windows console encoding |
-| `bookings.py` | CLI renderer for saved SQLite guidance bookings |
+---
+
+## Core Components
+
+| Module | Location | Purpose |
+|--------|----------|---------|
+| `main.py` | Root | Main executable CLI for running the bot, checking bookings, and building MOSS index |
+| `agent.py` | `src/campusx_voice_agent/` | Bot assembly: Gemini Live service, context aggregation, tools, and audio pipeline |
+| `tools.py` | `src/campusx_voice_agent/` | Function tools: knowledge search, slot availability, SQLite booking persistence |
+| `pipeline.py` | `src/campusx_voice_agent/` | WebRTC transport setup, turn management strategies, and metrics reporting |
+| `knowledge_base.py` | `src/campusx_voice_agent/` | Local document search engine |
+| `moss.py` / `moss_index.py` | `src/campusx_voice_agent/` | Semantic RAG processor and indexing tools |
+| `bookings.py` | `src/campusx_voice_agent/` | CLI table viewer for stored guidance bookings |
+| `stages/` | `stages/` | Educational step-by-step implementations from raw frames to full agent |
+
+---
 
 ## Prerequisites
 
-- Python 3.12+
-- OpenAI API key with access to:
-  - `gpt-4o-transcribe` (STT)
-  - `gpt-5` (LLM)
-  - `tts-1` (TTS)
-- Modern browser with WebRTC support (Chrome, Firefox, Edge)
+- **Python**: 3.12+
+- **Google AI Studio API Key**: Access to Gemini Live native-audio models
+- **Modern Browser**: Chrome, Firefox, Edge, or Brave (WebRTC support with microphone permission)
+
+---
 
 ## Installation
 
 ```bash
 # Clone the repository
-cd ai_voice_agent_using_pipecat
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>/AI_Voice
 
 # Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# On Windows:
+.venv\Scripts\activate
+# On Linux/macOS:
+source .venv/bin/activate
 
-# Install dependencies
+# Install dependencies with pip
 pip install -e ".[dev]"
 
-# Or with uv (faster)
+# Or using uv (recommended for fast installs)
 uv sync --dev
 ```
 
+---
+
 ## Configuration
 
-Environment values are loaded from `.env`. Use `.env.template` as the blank reference for the expected variables.
-
-Required:
-
-```env
-OPENAI_API_KEY=sk-your-key-here
-```
-
-Optional:
+1. Copy `.env.template` to `.env`:
+   ```bash
+   cp .env.template .env
+   ```
+2. Configure your environment variables in `.env`:
 
 ```env
-OPENAI_LLM_MODEL=gpt-5
-OPENAI_STT_MODEL=gpt-4o-transcribe
-OPENAI_TTS_MODEL=tts-1
-OPENAI_TTS_VOICE=nova
+# Required: Google Gemini API Key (Google AI Studio)
+GOOGLE_API_KEY=your-google-ai-studio-key
 
-# Custom database path for bookings
-# GUIDANCE_DB_PATH=/path/to/bookings.db
+# Optional: Gemini model and voice configuration
+GOOGLE_GEMINI_MODEL=models/gemini-2.5-flash-native-audio-preview-12-2025
+GOOGLE_GEMINI_VOICE=Puck
 
-# MOSS retrieval/indexing
+# Optional: Custom database path for bookings (defaults to data/guidance_bookings.db)
+# GUIDANCE_DB_PATH=data/guidance_bookings.db
+
+# Optional: MOSS semantic retrieval configuration
 # MOSS_PROJECT_ID=...
 # MOSS_PROJECT_KEY=...
 # MOSS_INDEX_NAME=...
@@ -81,91 +93,70 @@ OPENAI_TTS_VOICE=nova
 # MOSS_MODEL_ID=moss-minilm
 ```
 
+---
+
 ## Running the Agent
 
-### Development (with browser UI)
+### 1. Launch the Voice Agent (WebRTC UI)
 
 ```bash
-# Start the Pipecat runner (serves a WebRTC client at http://localhost:7860)
+# With uv
+uv run python main.py
+
+# Or directly with python
 python main.py
 ```
 
-Open `http://localhost:7860` in your browser, allow microphone access, and start talking.
+- Open your browser at **`http://localhost:7860`**.
+- Grant microphone access.
+- Start speaking naturally to interact with the voice agent.
 
-### CLI Commands
+### 2. View Saved Bookings
+
+Check bookings stored in SQLite from the command line:
 
 ```bash
-# View all booked guidance sessions
-python main.py bookings
-
-# Create MOSS semantic index (if using pipecat-moss)
-python main.py moss-index
-# or
-python main.py create-moss-index
+uv run python main.py bookings
 ```
 
-## Project Structure
+### 3. (Optional) Build MOSS Semantic Index
 
-```text
-ai_voice_agent_using_pipecat/
-|-- main.py                      # Single entry point (bot / bookings / moss-index)
-|-- pyproject.toml               # Project metadata and dependencies
-|-- .env                         # Active local environment values
-|-- .env.template                # Blank reference for environment variables
-|-- data/                        # Runtime data and knowledge files
-|   |-- guidance_bookings.db
-|   `-- knowledge_base/
-|-- src/
-|   `-- campusx_voice_agent/
-|       |-- agent.py             # Bot wiring: STT -> optional Moss -> LLM -> TTS
-|       |-- pipeline.py          # Shared Pipecat utilities
-|       |-- tools.py             # Function tools (search, slots, booking)
-|       |-- knowledge_base.py    # Local knowledge base search
-|       |-- moss.py              # MOSS retrieval processor
-|       |-- moss_index.py        # MOSS index creation CLI
-|       |-- config.py            # Environment and path configuration
-|       `-- bookings.py          # CLI: show_bookings()
-`-- stages/                      # Step-by-step example versions
+If you are using MOSS for semantic knowledge base search:
+
+```bash
+uv run python main.py moss-index
 ```
 
-## Stage Flow
+---
 
-The `stages/` directory builds the voice agent step by step in this sequence:
+## Step-by-Step Architecture Stages
 
-| Stage | Focus |
-|-------|-------|
-| `00_empty_project.py` | Prove the project and virtual environment are ready |
-| `01_transport_and_frames.py` | Receive browser audio in Python as Pipecat frames |
-| `02_cloud_stt.py` | Add cloud STT and print transcripts |
-| `03_turn_detection_and_context.py` | Add Silero VAD, explicit turn boundaries, and user context |
-| `04_llm_without_identity.py` | Add a generic text LLM with no business identity yet |
-| `05_system_prompt.py` | Give the LLM a CampusX booking role and voice-safe behavior |
-| `06_moss_create_index.py` | Create a Moss index from the local CampusX knowledge base |
-| `07_moss_rag_before_llm.py` | Retrieve Moss passages before the LLM answers |
-| `08_tts_audio_frames.py` | Synthesize OpenAI audio frames without sending them to the browser yet |
-| `09_conversation_memory.py` | Send TTS to the browser and save assistant turns in context |
-| `10_final_voice_agent.py` | Combine booking tools, browser TTS, conversational context, Moss retrieval, and barge-in handling |
+The `stages/` directory contains complete standalone scripts demonstrating how the voice agent is constructed incrementally:
 
-Moss enriches context before generation. Function tools come later for actions such as checking and booking guidance slots.
+| Stage | Script | Description |
+|-------|--------|-------------|
+| `00` | `00_empty_project.py` | Verifies environment setup and base imports |
+| `01` | `01_transport_and_frames.py` | WebRTC audio streaming into Pipecat frames |
+| `02` | `02_cloud_stt.py` | Real-time speech-to-text transcript processing |
+| `03` | `03_turn_detection_and_context.py` | Silero VAD, user turn boundaries, context aggregation |
+| `04` | `04_llm_without_identity.py` | Basic LLM integration without business logic |
+| `05` | `05_system_prompt.py` | Persona grounding, booking instructions, and conversation guardrails |
+| `06` | `06_moss_create_index.py` | Semantic chunking and vector index creation |
+| `07` | `07_moss_rag_before_llm.py` | Context enrichment with MOSS RAG before model generation |
+| `08` | `08_tts_audio_frames.py` | Audio synthesis from assistant responses |
+| `09` | `09_conversation_memory.py` | Bidirectional audio streaming with conversation memory |
+| `10` | `10_final_voice_agent.py` | Complete agent with function calling, SQLite booking, interruption, and filler speech |
 
-## Extending the Agent
+---
 
-### Add Knowledge Base Content
-Add `.md` or `.txt` files to `data/knowledge_base/` - they are searched by the local knowledge-base tool and can be uploaded to MOSS with `python main.py moss-index`.
+## Extending the Project
 
-### Add New Tools
-1. Define async function in `tools.py` with `FunctionCallParams`
-2. Add to `GUIDANCE_TOOLS` list
-3. Update `GUIDANCE_SYSTEM_PROMPT` with tool description
+- **Add Knowledge Base Content**: Place `.md` or `.txt` files into `data/knowledge_base/`.
+- **Add Function Tools**: Define your custom tool with `FunctionCallParams` in `src/campusx_voice_agent/tools.py` and register it in `GUIDANCE_TOOLS`.
+- **Tune Bot Behavior**: Update prompt guidelines and policies in `GUIDANCE_SYSTEM_PROMPT` inside `src/campusx_voice_agent/tools.py`.
 
-### Modify Prompt Policy
-Edit the guardrail instructions inside `GUIDANCE_SYSTEM_PROMPT` in `tools.py`.
+---
 
-## Troubleshooting
+## License
 
-| Issue | Solution |
-|-------|----------|
-| "Missing environment variable: OPENAI_API_KEY" | Add the key to `.env` |
-| No audio in browser | Allow microphone permission; check HTTPS (required for WebRTC) |
-| Moss retrieval disabled | Set `MOSS_PROJECT_ID`, `MOSS_PROJECT_KEY`, and `MOSS_INDEX_NAME`, or leave them unset to use only the local knowledge-base tool |
-| Booking slots not showing | Ensure `data/` is writable; check SQLite permissions |
+This project is licensed under the MIT License.

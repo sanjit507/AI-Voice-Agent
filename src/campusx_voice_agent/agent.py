@@ -44,7 +44,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
         messages=[
             {
                 "role": "user",
-                "content": "A caller has just connected. Greet them warmly in one short sentence and introduce yourself as the CampusX support specialist.",
+                "content": "A caller has just connected. Greet them warmly in one short sentence and introduce yourself as the CSE Study247 support specialist.",
             }
         ],
     )

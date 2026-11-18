@@ -164,7 +164,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     )
 
     # Stage 04 introduces generation. The LLM receives the completed user turn
-    # from context and produces assistant text, but no CampusX identity exists yet.
+    # from context and produces assistant text, but no CSE Study247 identity exists yet.
     llm = OpenAIResponsesLLMService(
         api_key=os.environ["OPENAI_API_KEY"],
         settings=OpenAIResponsesLLMService.Settings(

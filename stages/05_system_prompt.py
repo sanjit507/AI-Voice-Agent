@@ -1,4 +1,4 @@
-"""Stage 05: give the same LLM a real CampusX booking role and voice-safe behavior.
+"""Stage 05: give the same LLM a real CSE Study247 booking role and voice-safe behavior.
 
 The pipeline does not change; the LLM gains identity, confirmation rules, and
 boundaries purely through the system prompt.
@@ -40,7 +40,7 @@ from pipecat.workers.runner import WorkerRunner
 # Stage 05 introduces the system prompt. The code pipeline stays the same as
 # Stage 04, but the model now receives a concrete role, tone, and boundary.
 GUIDANCE_SYSTEM_PROMPT = """
-You are the CampusX free-guidance-session booking assistant on a live voice call.
+You are the CSE Study247 free-guidance-session booking assistant on a live voice call.
 Your job is to help a caller book a free 20-minute guidance session.
 Speak in short, warm, natural sentences without markdown.
 
@@ -178,14 +178,14 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     )
 
     # This is the runtime change from Stage 04: the same LLM service now receives
-    # the CampusX prompt through its settings object.
+    # the CSE Study247 prompt through its settings object.
     llm = OpenAIResponsesLLMService(
         api_key=os.environ["OPENAI_API_KEY"],
         settings=OpenAIResponsesLLMService.Settings(
             model=os.getenv("OPENAI_LLM_MODEL", "gpt-5-nano"),
             reasoning=OpenAIResponsesReasoningConfig(effort="minimal"),
             # system_instruction turns the generic Stage 04 assistant into a
-            # CampusX booking assistant with voice-safe behavior.
+            # CSE Study247 booking assistant with voice-safe behavior.
             system_instruction=GUIDANCE_SYSTEM_PROMPT,
         ),
     )

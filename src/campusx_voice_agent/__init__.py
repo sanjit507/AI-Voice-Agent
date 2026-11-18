@@ -1,1 +1,0 @@
-"""CampusX local Pipecat voice-agent package."""

@@ -1,4 +1,4 @@
-"""Real local actions for the CampusX free-guidance booking voice agent."""
+"""Real local actions for the CSE Study247 free-guidance booking voice agent."""
 
 # ruff: noqa: E501
 
@@ -13,8 +13,8 @@ from pathlib import Path
 
 from pipecat.services.llm_service import FunctionCallParams
 
-from campusx_voice_agent.config import DATA_DIR
-from campusx_voice_agent.knowledge_base import search_knowledge_base
+from csestudy247_voice_agent.config import DATA_DIR
+from csestudy247_voice_agent.knowledge_base import search_knowledge_base
 
 GUIDANCE_SYSTEM_PROMPT = """
 # Personality

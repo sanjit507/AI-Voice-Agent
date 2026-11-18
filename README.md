@@ -43,7 +43,7 @@ AI_Voice/
 |       |-- csestudy247_courses_and_roadmaps.md
 |       `-- dsa_python_course_full_curriculum.md
 |-- src/
-|   `-- campusx_voice_agent/
+|   `-- csestudy247_voice_agent/
 |       |-- agent.py             # Bot wiring: Gemini Live service, aggregators, pipeline
 |       |-- tools.py             # Function tools: KB search, slot availability, booking
 |       |-- knowledge_base.py    # Local keyword search engine

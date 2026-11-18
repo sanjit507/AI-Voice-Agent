@@ -1,4 +1,4 @@
-"""Stage 06: create a Moss index from the local CampusX knowledge base.
+"""Stage 06: create a Moss index from the local CSE Study247 knowledge base.
 
 Run this before Stage 07 and whenever local knowledge-base files change. The
 documents are uploaded to Moss through the Moss API; this stage does not create embeddings on your laptop.
@@ -21,7 +21,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 # The local markdown files are the source of truth for retrieval content.
 KNOWLEDGE_DIR = PROJECT_DIR / "data" / "knowledge_base"
 # Use a stable default index name so Stage 07 can point to the same Moss index.
-DEFAULT_INDEX_NAME = "campusx-voice-agent-knowledge"
+DEFAULT_INDEX_NAME = "CSE Study247-voice-agent-knowledge"
 # Chunk size balances retrieval quality with enough surrounding context for answers.
 CHUNK_CHARS = 1800
 # Overlap preserves context at chunk boundaries so important sentences are not split.
@@ -176,7 +176,7 @@ def load_documents():
                     metadata={
                         "source": path.name,
                         "chunk": str(index),
-                        "project": "campusx-voice-agent",
+                        "project": "CSE Study247-voice-agent",
                     },
                 )
             )

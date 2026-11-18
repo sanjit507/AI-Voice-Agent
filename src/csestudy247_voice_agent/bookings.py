@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from campusx_voice_agent.tools import list_saved_bookings
+from csestudy247_voice_agent.tools import list_saved_bookings
 
 
 def show_bookings() -> None:

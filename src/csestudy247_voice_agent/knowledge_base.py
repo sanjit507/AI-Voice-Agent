@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from campusx_voice_agent.config import DATA_DIR
+from csestudy247_voice_agent.config import DATA_DIR
 
 SUPPORTED_EXTENSIONS = {".md", ".txt"}
 DEFAULT_KB_DIR = DATA_DIR / "knowledge_base"
@@ -32,7 +32,7 @@ class KnowledgeMatch:
 
 
 def _knowledge_base_dir() -> Path:
-    configured = os.getenv("CAMPUSX_KNOWLEDGE_BASE_DIR")
+    configured = os.getenv("CSESTUDY247_KNOWLEDGE_BASE_DIR") or os.getenv("CAMPUSX_KNOWLEDGE_BASE_DIR")
     return Path(configured) if configured else DEFAULT_KB_DIR
 
 
@@ -84,7 +84,7 @@ def search_knowledge_base(
     limit: int = 4,
     kb_dir: Path | None = None,
 ) -> dict[str, object]:
-    """Search local CampusX knowledge files and return short verified snippets."""
+    """Search local CSE Study247 knowledge files and return short verified snippets."""
     cleaned_query = query.strip()
     root = kb_dir or _knowledge_base_dir()
     base_result: dict[str, object] = {

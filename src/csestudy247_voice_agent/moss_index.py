@@ -1,4 +1,4 @@
-"""Create or refresh a Moss index from local CampusX knowledge-base files."""
+"""Create or refresh a Moss index from local CSE Study247 knowledge-base files."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ import re
 
 from loguru import logger
 
-from campusx_voice_agent.config import DATA_DIR
+from csestudy247_voice_agent.config import DATA_DIR
 
 KNOWLEDGE_DIR = DATA_DIR / "knowledge_base"
-DEFAULT_INDEX_NAME = "campusx-voice-agent-knowledge"
+DEFAULT_INDEX_NAME = "csestudy247-voice-agent-knowledge"
 CHUNK_CHARS = 1800
 CHUNK_OVERLAP = 250
 
@@ -141,7 +141,7 @@ def _load_documents():
                     metadata={
                         "source": path.name,
                         "chunk": str(index),
-                        "project": "campusx-voice-agent",
+                        "project": "csestudy247-voice-agent",
                     },
                 )
             )

@@ -1,4 +1,4 @@
-"""Single entry point for the CampusX local voice-agent codebase."""
+"""Single entry point for the CSE Study247 local voice-agent codebase."""
 
 from __future__ import annotations
 
@@ -11,13 +11,13 @@ SRC_DIR = PROJECT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from campusx_voice_agent import config as _config  # noqa: E402,F401
-from campusx_voice_agent.bookings import show_bookings  # noqa: E402
-from campusx_voice_agent.moss_index import main as create_moss_index  # noqa: E402
+from csestudy247_voice_agent import config as _config  # noqa: E402,F401
+from csestudy247_voice_agent.bookings import show_bookings  # noqa: E402
+from csestudy247_voice_agent.moss_index import main as create_moss_index  # noqa: E402
 
 
 async def bot(runner_args: Any):
-    from campusx_voice_agent.agent import bot as voice_agent_bot
+    from csestudy247_voice_agent.agent import bot as voice_agent_bot
 
     await voice_agent_bot(runner_args)
 

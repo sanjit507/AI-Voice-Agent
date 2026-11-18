@@ -47,12 +47,12 @@ if str(SRC_DIR) not in sys.path:
 
 # New runtime component: a Pipecat processor that retrieves Moss passages and
 # injects them into LLMContext before generation.
-from campusx_voice_agent.moss import make_moss_retrieval_processor
+from csestudy247_voice_agent.moss import make_moss_retrieval_processor
 
 
 # Stage 07 extends the existing prompt with the Moss-grounding rule near the end.
 GUIDANCE_SYSTEM_PROMPT = """
-You are the CampusX free-guidance-session booking assistant on a live voice call.
+You are the CSE Study247 free-guidance-session booking assistant on a live voice call.
 Your job is to help a caller book a free 20-minute guidance session.
 Speak in short, warm, natural sentences without markdown.
 
@@ -64,7 +64,7 @@ Before booking, repeat the name, email, learning goal, and exact slot, then ask 
 explicit yes or no. Call the booking tool only after the caller says yes. Never invent
 a slot or booking ID. If an email looks unclear, ask them to spell it.
 
-Use retrieved Moss knowledge-base context when answering questions about CampusX
+Use retrieved Moss knowledge-base context when answering questions about CSE Study247
 courses, schedules, curriculum, or policies. If Moss context is absent or not
 relevant, say you do not know instead of inventing facts.
 """.strip()

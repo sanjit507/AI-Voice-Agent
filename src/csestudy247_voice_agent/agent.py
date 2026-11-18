@@ -1,4 +1,4 @@
-"""Final local CampusX guidance-booking voice agent used for the live demo."""
+"""Final local CSE Study247 guidance-booking voice agent used for the live demo."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from pipecat.services.google.gemini_live.llm import (
 )
 from pipecat.transports.base_transport import BaseTransport
 
-from campusx_voice_agent.moss import make_moss_retrieval_processor
-from campusx_voice_agent.pipeline import (
+from csestudy247_voice_agent.moss import make_moss_retrieval_processor
+from csestudy247_voice_agent.pipeline import (
     AudioTrace,
     MetricsPrinter,
     make_transport,
@@ -21,7 +21,7 @@ from campusx_voice_agent.pipeline import (
     require_env,
     run_pipeline,
 )
-from campusx_voice_agent.tools import GUIDANCE_SYSTEM_PROMPT, GUIDANCE_TOOLS
+from csestudy247_voice_agent.tools import GUIDANCE_SYSTEM_PROMPT, GUIDANCE_TOOLS
 
 
 async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):

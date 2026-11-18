@@ -170,5 +170,5 @@ async def make_moss_retrieval_processor() -> FrameProcessor | None:
         index_name=index_name,
         top_k=_env_int("MOSS_TOP_K", 5),
         alpha=_env_float("MOSS_ALPHA", 0.8),
-        system_prompt="Relevant passages from the CampusX Moss knowledge base:\n\n",
+        system_prompt="Relevant passages from the CSE Study247 Moss knowledge base:\n\n",
     )
